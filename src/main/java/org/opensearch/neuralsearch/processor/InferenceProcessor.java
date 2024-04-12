@@ -109,12 +109,12 @@ public abstract class InferenceProcessor extends AbstractProcessor {
     public void execute(IngestDocument ingestDocument, BiConsumer<IngestDocument, Exception> handler) {
         try {
             validateEmbeddingFieldsValue(ingestDocument);
-            Map<String, Object> ProcessMap = buildMapWithTargetKeyAndOriginalValue(ingestDocument);
-            List<String> inferenceList = createInferenceList(ProcessMap);
+            Map<String, Object> processMap = buildMapWithTargetKeyAndOriginalValue(ingestDocument);
+            List<String> inferenceList = createInferenceList(processMap);
             if (inferenceList.size() == 0) {
                 handler.accept(ingestDocument, null);
             } else {
-                doExecute(ingestDocument, ProcessMap, inferenceList, handler);
+                doExecute(ingestDocument, processMap, inferenceList, handler);
             }
         } catch (Exception e) {
             handler.accept(null, e);
@@ -213,7 +213,8 @@ public abstract class InferenceProcessor extends AbstractProcessor {
             sourceAndMetadataMap,
             fieldMap,
             1,
-            ProcessorDocumentUtils.getMaxDepth(sourceAndMetadataMap, clusterService, environment)
+            ProcessorDocumentUtils.getMaxDepth(sourceAndMetadataMap, clusterService, environment),
+            true
         );
     }
 

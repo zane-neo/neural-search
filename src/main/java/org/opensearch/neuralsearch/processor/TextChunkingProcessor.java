@@ -17,7 +17,6 @@ import org.opensearch.cluster.metadata.IndexMetadata;
 import org.opensearch.env.Environment;
 import org.opensearch.cluster.service.ClusterService;
 import org.opensearch.index.analysis.AnalysisRegistry;
-import org.opensearch.index.mapper.MapperService;
 import org.opensearch.index.IndexSettings;
 import org.opensearch.ingest.AbstractProcessor;
 import org.opensearch.ingest.IngestDocument;
@@ -170,7 +169,8 @@ public final class TextChunkingProcessor extends AbstractProcessor {
             sourceAndMetadataMap,
             fieldMap,
             1,
-            ProcessorDocumentUtils.getMaxDepth(sourceAndMetadataMap, clusterService, environment)
+            ProcessorDocumentUtils.getMaxDepth(sourceAndMetadataMap, clusterService, environment),
+            false
         );
         // fixed token length algorithm needs runtime parameter max_token_count for tokenization
         Map<String, Object> runtimeParameters = new HashMap<>();
@@ -288,7 +288,13 @@ public final class TextChunkingProcessor extends AbstractProcessor {
         // leaf type means null, String or List<String>
         // the result should be an empty list when the input is null
         List<String> result = new ArrayList<>();
+        if (value == null) {
+            return result;
+        }
         if (value instanceof String) {
+            if (StringUtils.isBlank(String.valueOf(value))) {
+                return result;
+            }
             result = chunkString(value.toString(), runTimeParameters);
         } else if (isListOfString(value)) {
             result = chunkList((List<String>) value, runTimeParameters);
