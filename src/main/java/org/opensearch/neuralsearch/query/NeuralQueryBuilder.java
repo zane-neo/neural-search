@@ -40,6 +40,8 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryRewriteContext;
 import org.opensearch.index.query.QueryShardContext;
 import org.opensearch.knn.index.query.KNNQueryBuilder;
+import org.opensearch.ml.common.input.parameter.textembedding.AsymmetricTextEmbeddingParameters;
+import org.opensearch.ml.common.input.parameter.textembedding.AsymmetricTextEmbeddingParameters.EmbeddingContentType;
 import org.opensearch.knn.index.query.parser.MethodParametersParser;
 import org.opensearch.knn.index.query.parser.RescoreParser;
 import org.opensearch.knn.index.query.rescore.RescoreContext;
@@ -333,10 +335,15 @@ public class NeuralQueryBuilder extends AbstractQueryBuilder<NeuralQueryBuilder>
             inferenceInput.put(INPUT_IMAGE, queryImage());
         }
         queryRewriteContext.registerAsyncAction(
-            ((client, actionListener) -> ML_CLIENT.inferenceSentences(modelId(), inferenceInput, ActionListener.wrap(floatList -> {
-                vectorSetOnce.set(vectorAsListToArray(floatList));
-                actionListener.onResponse(null);
-            }, actionListener::onFailure)))
+            ((client, actionListener) -> ML_CLIENT.inferenceSentences(
+                modelId(),
+                inferenceInput,
+                AsymmetricTextEmbeddingParameters.builder().embeddingContentType(EmbeddingContentType.QUERY).build(),
+                ActionListener.wrap(floatList -> {
+                    vectorSetOnce.set(vectorAsListToArray(floatList));
+                    actionListener.onResponse(null);
+                }, actionListener::onFailure)
+            ))
         );
         return new NeuralQueryBuilder(
             fieldName(),
