@@ -245,6 +245,11 @@ public class TextEmbeddingProcessorIT extends BaseNeuralSearchIT {
         return registerModelGroupAndUploadModel(requestBody);
     }
 
+    private String uploadTextEmbeddingModel() throws Exception {
+        String requestBody = Files.readString(Path.of(classLoader.getResource("processor/UploadModelRequestBody.json").toURI()));
+        return registerModelGroupAndUploadModel(requestBody);
+    }
+
     private void createTextEmbeddingIndex() throws Exception {
         createIndexWithConfiguration(
             INDEX_NAME,
@@ -262,7 +267,7 @@ public class TextEmbeddingProcessorIT extends BaseNeuralSearchIT {
             loadModel(modelId);
             createPipelineProcessor(modelId, PIPELINE_NAME, ProcessorType.TEXT_EMBEDDING);
             createTextEmbeddingIndex();
-            ingestDocument();
+            ingestDocument(INGEST_DOC1, null);
             assertEquals(1, getDocCount(INDEX_NAME));
         } finally {
             wipeOfTestResources(INDEX_NAME, PIPELINE_NAME, modelId, null);
