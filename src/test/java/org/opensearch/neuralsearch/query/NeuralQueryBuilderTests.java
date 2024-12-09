@@ -771,10 +771,10 @@ public class NeuralQueryBuilderTests extends OpenSearchTestCase {
             .modelId(MODEL_ID)
             .k(K)
             .build();
-        List<Float> expectedVector = Arrays.asList(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+        List<Number> expectedVector = Arrays.asList(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
         MLCommonsClientAccessor mlCommonsClientAccessor = mock(MLCommonsClientAccessor.class);
         doAnswer(invocation -> {
-            ActionListener<List<Float>> listener = invocation.getArgument(2);
+            ActionListener<List<Number>> listener = invocation.getArgument(2);
             listener.onResponse(expectedVector);
             return null;
         }).when(mlCommonsClientAccessor).inferenceSentences(any(), anyMap(), any());
@@ -809,10 +809,10 @@ public class NeuralQueryBuilderTests extends OpenSearchTestCase {
             .modelId(MODEL_ID)
             .k(K)
             .build();
-        List<Float> expectedVector = Arrays.asList(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+        List<Number> expectedVector = Arrays.asList(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
         MLCommonsClientAccessor mlCommonsClientAccessor = mock(MLCommonsClientAccessor.class);
         doAnswer(invocation -> {
-            ActionListener<List<Float>> listener = invocation.getArgument(2);
+            ActionListener<List<Number>> listener = invocation.getArgument(2);
             listener.onResponse(expectedVector);
             return null;
         }).when(mlCommonsClientAccessor).inferenceSentences(any(), anyMap(), any());
